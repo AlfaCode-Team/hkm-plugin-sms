@@ -1,0 +1,53 @@
+{
+    "name": "sms",
+    "version": "0.1.0",
+    "kernel": "^1.19.0",
+    "solves": "sms.delivery",
+    "type": "module",
+
+    "requires": [
+        "http.client"
+    ],
+
+    "exposes": [
+        "AlfacodeTeam\\PhpServicePlatform\\Kernel\\Ports\\SmsPort",
+        "Plugins\\Sms\\API\\Contracts\\SmsSenderContract"
+    ],
+
+    "routes": [],
+    "emits": [],
+    "listens": [],
+    "files": [],
+
+    "commands": [
+        {
+            "name": "sms:status",
+            "handler": "Plugins\\Sms\\Infrastructure\\Cli\\SmsStatusCommand"
+        },
+        {
+            "name": "sms:cost",
+            "handler": "Plugins\\Sms\\Infrastructure\\Cli\\SmsCostCommand"
+        },
+        {
+            "name": "sms:send",
+            "handler": "Plugins\\Sms\\Infrastructure\\Cli\\SmsSendCommand"
+        }
+    ],
+
+    "documentation": "Binds the kernel's SmsPort, which had no adapter. Validates destinations as E.164 and computes GSM-7/UCS-2 segmentation before sending, so a message's real cost is known at the call site. Transports: twilio, log, mock. Destinations listed in SMS_MOCK_NUMBERS are never sent to, which is what lets a phone-OTP flow run end to end in tests and review environments.",
+
+    "//transport": "The default is 'log', never a live provider. Defaulting to twilio would make missing credentials a boot failure for an application that installed this plugin before configuring it, and the first thing that breaks is a request which worked yesterday.",
+
+    "config": [
+        { "key": "SMS_TRANSPORT", "type": "string", "required": false, "default": "log" },
+        { "key": "SMS_FROM", "type": "string", "required": false },
+        { "key": "SMS_MAX_SEGMENTS", "type": "int", "required": false, "default": 0 },
+        { "key": "SMS_TIMEOUT", "type": "int", "required": false, "default": 15 },
+        { "key": "SMS_MOCK_NUMBERS", "type": "string", "required": false },
+
+        { "key": "SMS_TWILIO_ACCOUNT_SID", "type": "string", "required": false },
+        { "key": "SMS_TWILIO_AUTH_TOKEN", "type": "string", "required": false },
+        { "key": "SMS_TWILIO_FROM", "type": "string", "required": false },
+        { "key": "SMS_TWILIO_MESSAGING_SERVICE_SID", "type": "string", "required": false }
+    ]
+}
